@@ -1,31 +1,41 @@
 using DifferentialEquations
 using Plots
 
-function continuousFriction()
+import .FrictionModels as FM
+
+function example()
 
     g = 9810;    # mm/s^2
 
     # Base parameters
-    f = 20.0;    # Hz
-    Γ = 10.0;    # g
-    ϕ = 0.5*pi;  # rad
+    f = 20.0;     # Hz
+    Γ = 0.63;     # g
+    ϕ = 3.0*pi/8.0;  # rad
 
     # Derived base parameters
     ω = 2*pi*f;    # rad/S
     V = Γ * g / ω; # mm/s
 
     # Base velocity
-    v_b = t -> - V * (cos(ω*t)); # + 0.5*cos(2ω*t + ϕ)); 
+    a_b = t ->   Γ * g * (sin(ω*t) + sin(2ω*t + ϕ))
+    v_b = t -> - V * (cos(ω*t) + 0.5*cos(2ω*t + ϕ)); 
 
     # Friction parameters
     μ_d =  0.16;    # 1
-    Δv  = 200.0;     # mm/s
+    μ_s =  0.20;    # 1
     μ_dg = μ_d * g; # mm/s^2
+    μ_sg = μ_s * g; # mm/s^2
 
-    # Friction model
-    function frictionModel(v, v_b, t)
-        - μ_dg * tanh((v - v_b(t))/Δv)
-    end
+    Δv = 5.0;    # mm/s
+    v0 = 0.5;    #mm/s
+    v1 = 5.0;    #mm/s
+
+    ## Friction models
+    #frictionModel = (v, p, t) -> FM.CoulombTanh(v, p, t, v_b, μ_dg, Δv)
+    #frictionModel = (v, p, t) -> FM.CoulombLinear(v, p, t, v_b, μ_dg, 1.0/Δv)
+    #frictionModel = (v, p, t) -> FM.PiecewiseLinear(v, p, t, v_b, μ_dg, μ_sg, v0, v1)
+    #frictionModel = (v, p, t) -> FM.BengisuAndAkay(v, p, t, v_b, μ_dg, μ_sg, v0, 1.0/Δv)
+    frictionModel = (v, p, t) -> FM.Ambrosio(v, p, t, v_b, μ_dg, v0, v1)
 
     # Integration conditions
     v0 = 0.0 
@@ -33,10 +43,9 @@ function continuousFriction()
     tspan = (0.0, t_end)
 
     # Define problem type and solve
-    prob = ODEProblem(frictionModel, v0, tspan, v_b)
-    sol = solve(prob, Rodas5P(), reltol = 1e-8, abstol = 1e-8)
+    prob = ODEProblem(frictionModel, v0, tspan)
+    sol = solve(prob, Tsit5(), reltol = 1e-8, abstol = 1e-8)
 
-    #plot(sol.t, t -> v_b(t), label = "v_b")
-    plot(sol, xaxis = "t", yaxis = "v", label = "v_w")   
-
+    plot(0.0:0.0001:t_end, t -> v_b(t), label = "v_b")
+    plot!(sol, xaxis = "t", yaxis = "v", label = "v_w") 
 end
