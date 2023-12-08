@@ -1,7 +1,7 @@
 using DifferentialEquations
 using Plots
 
-import .FrictionModels as FM
+include("FrictionModels.jl")
 
 function example()
 
@@ -31,11 +31,11 @@ function example()
     v1 = 5.0;    #mm/s
 
     ## Friction models
-    #frictionModel = (v, p, t) -> FM.CoulombTanh(v, p, t, v_b, μ_dg, Δv)
-    #frictionModel = (v, p, t) -> FM.CoulombLinear(v, p, t, v_b, μ_dg, 1.0/Δv)
-    #frictionModel = (v, p, t) -> FM.PiecewiseLinear(v, p, t, v_b, μ_dg, μ_sg, v0, v1)
-    #frictionModel = (v, p, t) -> FM.BengisuAndAkay(v, p, t, v_b, μ_dg, μ_sg, v0, 1.0/Δv)
-    frictionModel = (v, p, t) -> FM.Ambrosio(v, p, t, v_b, μ_dg, v0, v1)
+    #frictionModel = (v, p, t) -> CoulombTanh(v, p, t, v_b, μ_dg, Δv)
+    #frictionModel = (v, p, t) -> CoulombLinear(v, p, t, v_b, μ_dg, 1.0/Δv)
+    #frictionModel = (v, p, t) -> PiecewiseLinear(v, p, t, v_b, μ_dg, μ_sg, v0, v1)
+    #frictionModel = (v, p, t) -> BengisuAndAkay(v, p, t, v_b, μ_dg, μ_sg, v0, 1.0/Δv)
+    frictionModel = (v, p, t) -> Ambrosio(v, p, t, v_b, μ_dg, v0, v1)
 
     # Integration conditions
     v0 = 0.0 
