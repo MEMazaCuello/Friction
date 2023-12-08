@@ -1,20 +1,18 @@
 # Friction
 Suite of friction models written in [julia](https://julialang.org/).
 
-Requires **DifferentialEquations.jl** ([documentation](https://docs.sciml.ai/DiffEqDocs/stable/)) and **Plots.jl** ([documentation](https://docs.juliaplots.org/stable/)) packages.
+They are written to be integrated with **DifferentialEquations.jl** ([documentation](https://docs.sciml.ai/DiffEqDocs/stable/)).
 
-To install them, run the following commands in the julia terminal:
+To install it, run the following commands in the julia REPL:
 ```julia
 using Pkg
 Pkg.add("DifferentialEquations")
-Pkg.add("Plots")
 ```
-
 Note that the installation may take several minutes to complete.
 
-To use the functions, copy the ```FrictionModels.jl``` file into your working directory, and import it like this:
+To use the functions, copy the ```FrictionModels.jl``` file into your working directory, and include it like this:
 ```
-import .FrictionModels as FM
+include("FrictionModels.jl")
 ```
 
 The ```example.jl``` file contains an example of usage for a biharmonic base signal.
